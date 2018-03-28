@@ -12,23 +12,24 @@ import com.netflix.curator.x.discovery.ServiceDiscoveryBuilder;
 import com.netflix.curator.x.discovery.details.JsonInstanceSerializer;
 
 @Configuration
-public class ClientConfig {	
-	private static final String ZK_HOST = "localhost";
+public class ClientConfig {
+    private static final String ZK_HOST = "localhost";
 
-	@Bean( initMethod = "start", destroyMethod = "close" )
-	public CuratorFramework curator() {
-		 return CuratorFrameworkFactory.newClient( ZK_HOST, new ExponentialBackoffRetry( 1000, 3 ) );
-	}
-	
-	@Bean( initMethod = "start", destroyMethod = "close" )
-	public ServiceDiscovery< RestServiceDetails > discovery() {
-		JsonInstanceSerializer< RestServiceDetails > serializer = 
-        	new JsonInstanceSerializer< RestServiceDetails >( RestServiceDetails.class );
+    @Bean(initMethod = "start", destroyMethod = "close")
+    public CuratorFramework curator() {
+        return CuratorFrameworkFactory.newClient(ZK_HOST,
+                new ExponentialBackoffRetry(1000, 3));
+    }
 
-        return ServiceDiscoveryBuilder.builder( RestServiceDetails.class )
-            .client( curator() )
-            .basePath( "services" )
-            .serializer( serializer )
-            .build();        
-	}
+    @Bean(initMethod = "start", destroyMethod = "close")
+    public ServiceDiscovery<RestServiceDetails> discovery() {
+        JsonInstanceSerializer<RestServiceDetails> serializer =
+                new JsonInstanceSerializer<RestServiceDetails>(RestServiceDetails.class);
+
+        return ServiceDiscoveryBuilder.builder(RestServiceDetails.class)
+                .client(curator())
+                .basePath("services")
+                .serializer(serializer)
+                .build();
+    }
 }

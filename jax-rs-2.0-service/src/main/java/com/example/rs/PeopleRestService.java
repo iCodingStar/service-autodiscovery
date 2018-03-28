@@ -20,33 +20,36 @@ import com.example.model.Person;
 import com.netflix.curator.x.discovery.ServiceDiscovery;
 import com.netflix.curator.x.discovery.ServiceInstance;
 
-@Path( PeopleRestService.PEOPLE_PATH ) 
+@Path(PeopleRestService.PEOPLE_PATH)
 public class PeopleRestService {
-	public static final String PEOPLE_PATH = "/people";
-	
-	@Inject private JaxRsApiApplication application;
-	@Inject private ServiceDiscovery< RestServiceDetails > discovery;	
-	@Inject private Environment environment;
-	
-	@PostConstruct
-	public void init() throws Exception {
-		final ServiceInstance< RestServiceDetails > instance = 
-			ServiceInstance.< RestServiceDetails >builder()
-	            .name( "people" )
-	            .payload( new RestServiceDetails( "1.0" ) )
-	            .port( environment.getProperty( AppConfig.SERVER_PORT, Integer.class ) )
-	            .uriSpec( application.getUriSpec( PEOPLE_PATH ) )
-	            .build();
-		
-		discovery.registerService( instance );
-	}
-	
-	@Produces( { MediaType.APPLICATION_JSON } )
-	@GET
-	public Collection< Person > getPeople( @QueryParam( "page") @DefaultValue( "1" ) final int page ) {
-		return Arrays.asList(
-			new Person( "Tom", "Bombadil" ),
-			new Person( "Jim", "Tommyknockers" )
-		);
-	}
+    public static final String PEOPLE_PATH = "/people";
+
+    @Inject
+    private JaxRsApiApplication application;
+    @Inject
+    private ServiceDiscovery<RestServiceDetails> discovery;
+    @Inject
+    private Environment environment;
+
+    @PostConstruct
+    public void init() throws Exception {
+        final ServiceInstance<RestServiceDetails> instance =
+                ServiceInstance.<RestServiceDetails>builder()
+                        .name("people")
+                        .payload(new RestServiceDetails("1.0"))
+                        .port(environment.getProperty(AppConfig.SERVER_PORT, Integer.class))
+                        .uriSpec(application.getUriSpec(PEOPLE_PATH))
+                        .build();
+        // 服务注册
+        discovery.registerService(instance);
+    }
+
+    @Produces({MediaType.APPLICATION_JSON})
+    @GET
+    public Collection<Person> getPeople(@QueryParam("page") @DefaultValue("1") final int page) {
+        return Arrays.asList(
+                new Person("Tom", "Bombadil"),
+                new Person("Jim", "Tommyknockers")
+        );
+    }
 }
